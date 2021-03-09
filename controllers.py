@@ -47,10 +47,28 @@ class InicioSesionUserControllers(MethodView):
         password = content.get("password")
         return jsonify({"login ok": True, "nombre": nombre}), 200
 
-class InicioUserControllers(MethodView):
+class TablaControllers(MethodView):
     
     def post(self):
-       pass 
+    productos = [{id: 1, nombre: "Arroz", precio: 2000},
+                    {id: 2, nombre: "Aceite", precio: 2500},
+                    {id: 3, nombre: "Papa", precio: 1800},
+                    {id: 4, nombre: "Panela", precio: 4000},
+                    {id: 5, nombre: "Arroz", precio: 2000},
+                    {id: 6, nombre: "Aceite", precio: 2500},
+                    {id: 7, nombre: "Papa", precio: 1800},
+                    {id: 8, nombre: "Panela", precio: 4000},
+                    {id: 9, nombre: "Arroz", precio: 2000},
+                    {id: 10, nombre: "Aceite", precio: 2500},
+                    {id: 11, nombre: "Papa", precio: 1800},
+                    {id: 12, nombre: "Panela", precio: 4000},
+                    ]
+
+       content = request.get_json()
+       id = content.get("id")
+       nombre= content.get("nombre")
+       precio = content.get("precio")
+       return jsonify({"productos": productos, "id": id, "nombre": nombre, "precio": precio}), 200
 
 class CategoriasGranosUserControllers(MethodView):
     

@@ -10,7 +10,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.add_url_rule(user["registro_user"], view_func=user["registro_user_controllers"])
 app.add_url_rule(user["inicio-sesion_user"], view_func=user["inicio-sesion_user_controllers"])
 
-app.add_url_rule(user["inicio_user"], view_func=user["inicio_user_controllers"])
+app.add_url_rule(user["tabla_user"], view_func=user["tabla_user_controllers"])
 app.add_url_rule(user["categoriasgranos_user"], view_func=user["categoriasgranos_user_controllers"])
 app.add_url_rule(user["categoriascarnes_user"], view_func=user["categoriascarnes_user_controllers"])
 app.add_url_rule(user["categoriasverduras_user"], view_func=user["categoriasverduras_user_controllers"])
