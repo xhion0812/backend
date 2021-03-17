@@ -9,7 +9,6 @@ class LoginUserControllers(MethodView):
         Example Login
     """
     def post(self):
-        #simulacion de espera en el back con 1.5 segundos
         time.sleep(3)
         content = request.get_json()
         email = content.get("email")
@@ -43,33 +42,27 @@ class InicioSesionUserControllers(MethodView):
     def post(self):
         time.sleep(3)
         content = request.get_json()
-        nombre = content.get("nombre")
+        email = content.get("email")
         password = content.get("password")
-        return jsonify({"login ok": True, "nombre": nombre}), 200
+        return jsonify({"login ok": True, "email": email}), 200
 
 class TablaControllers(MethodView):
     
-    def post(self):
-    productos = [{id: 1, nombre: "Arroz", precio: 2000},
-                    {id: 2, nombre: "Aceite", precio: 2500},
-                    {id: 3, nombre: "Papa", precio: 1800},
-                    {id: 4, nombre: "Panela", precio: 4000},
-                    {id: 5, nombre: "Arroz", precio: 2000},
-                    {id: 6, nombre: "Aceite", precio: 2500},
-                    {id: 7, nombre: "Papa", precio: 1800},
-                    {id: 8, nombre: "Panela", precio: 4000},
-                    {id: 9, nombre: "Arroz", precio: 2000},
-                    {id: 10, nombre: "Aceite", precio: 2500},
-                    {id: 11, nombre: "Papa", precio: 1800},
-                    {id: 12, nombre: "Panela", precio: 4000},
+  def get(self):
+        productos = [{"id": 1, "nombre": "Arroz", "precio": 2000},
+                    {"id": 2, "nombre": "Aceite", "precio": 2500},
+                    {"id": 3, "nombre": "Papa", "precio": 1800},
+                    {"id": 4, "nombre": "Panela", "precio": 4000},
+                    {"id": 5, "nombre": "Arroz", "precio": 2000},
+                    {"id": 6, "nombre": "Aceite", "precio": 2500},
+                    {"id": 7, "nombre": "Papa", "precio": 1800},
+                    {"id": 8, "nombre": "Panela", "precio": 4000},
+                    {"id": 9, "nombre": "Arroz", "precio": 2000},
+                    {"id": 10, "nombre": "Aceite", "precio": 2500},
+                    {"id": 11, "nombre": "Papa", "precio": 1800},
+                    {"id": 12, "nombre": "Panela", "precio": 4000},
                     ]
-
-       content = request.get_json()
-       id = content.get("id")
-       nombre= content.get("nombre")
-       precio = content.get("precio")
-       return jsonify({"productos": productos, "id": id, "nombre": nombre, "precio": precio}), 200
-
+        return jsonify({"datos": productos}), 200
 class CategoriasGranosUserControllers(MethodView):
     
     def post(self):
