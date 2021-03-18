@@ -1,4 +1,4 @@
-from controllers import LoginUserControllers, RegistroUserControllers, InicioSesionUserControllers, TablaControllers, CategoriasGranosUserControllers, CategoriasCarnesUserControllers, CategoriasVerdurasUserControllers 
+from controllers import LoginUserControllers, RegistroUserControllers, InicioSesionUserControllers, TablaControllers, CategoriasGranosUserControllers, CategoriasCarnesUserControllers, CategoriasVerdurasUserControllers, app
 
 
 user = {
