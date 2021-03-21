@@ -2,10 +2,8 @@ from flask.views import MethodView
 from flask import Flask
 from flask_mysqldb import MySQL
 from flask import jsonify, request, flash
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended import create_access_token
 import MySQLdb.cursors
+import bcrypt
 import time
 import re
 
@@ -20,8 +18,6 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'todito'
 
 mysql = MySQL(app)
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
 class LoginUserControllers(MethodView):
     """
         Example Login
@@ -38,6 +34,7 @@ class LoginUserControllers(MethodView):
         return jsonify({"auth": False}), 401
         
 class RegistroUserControllers(MethodView):
+    
     def post(self):
         time.sleep(3)
         content = request.get_json()
@@ -49,66 +46,59 @@ class RegistroUserControllers(MethodView):
         correo = content.get("correo")
         password = content.get("password")
         password_verifi = content.get("password_verifi")
+        #salt = bcrypt.gensalt()
+        salt = bcrypt.gensalt()
+        print("PASSWORD LISTA")
+        hash_password = bcrypt.hashpw(bytes(str(password), encoding='utf-8'), salt)
+        print("PASSWORD ",hash_password)
         cursor = mysql.connection.cursor()
-        cursor.execute('INSERT INTO registro (nombres, apellidos, documento, direccion, telefono, correo, pass) VALUES(%s, %s, %s, %s, %s, %s, %s)',(nombres, apellidos, documento, direccion, telefono, correo, password))
+        cursor.execute('INSERT INTO registro (nombres, apellidos, documento, direccion, telefono, correo, pass) VALUES(%s, %s, %s, %s, %s, %s, %s)',(nombres, apellidos, documento, direccion, telefono, correo, hash_password))
         mysql.connection.commit()
+        cursor.close()
         return jsonify({"login ok": True, "nombres": nombres, "apellidos": apellidos, "cedula": documento, "direccion": direccion, "telefono": telefono, "correo": correo}), 200
 
-#@app.route('', methods=['GET', 'POST'])
-    #@app.route("/api/v01/user/registro", methods=["POST"])
-    """def post(self):
-        if request.method == 'POST':
-            apellidos = request.form.get()['apellidos']
-            nombres = request.form.get()["nombres"]
-            documento = request.form.get()["cedula"]
-            direccion = request.form.get()["direccion"]
-            telefono = request.form.get()["telefono"]
-            correo = request.form.get()["correo"]
-            contrasena = request.form.get["password"]
-            cursor = mysql.connection.cursor()
-            cursor.execute("INSERT INTO registro (nombres, apellidos, documento, direccion, telefono, correo, contrasena ) VALUES ('" + 
-            str(nombres) + "', '" + 
-            str(apellidos) + "', '" + 
-            str(documento) + "', '" + 
-            str(direccion) + "', '" +
-            str(telefono) + "', '" + 
-            str(correo) + "', '" + 
-            str(contrasena) + "')")
-            mysql.connection.commit()
-            
-            data = {
-                "nombres": nombres,
-                "apellidos": apellidos,
-                "documento": documento,
-                "direccion": direccion,
-                "telefono": telefono,
-                "correo": correo,
-                "contrasena": contrasena
-            }
-            print(data)
-        return jsonify({"data": data})
-
-"""
 class InicioSesionUserControllers(MethodView):
 
     def post(self):
+        datos = ""
         time.sleep(3)        
-        cursor = mysql.connection.cursor()
         content = request.get_json()
-        email = content.get("email")
+        correo = content.get("email")
         password = content.get("password")
-        result = ""
-
-        cursor.execute("SELECT * FROM registro WHERE correo ='" + str(email) + "'")
-        rv = cursor.fetchone()
-
+        token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"
+        cursor = mysql.connection.cursor()
+        cursor.execute("""SELECT nombres, apellidos, pass, documento, direccion, telefono, correo FROM registro WHERE correo = %s""", ([correo]))
+        datos = cursor.fetchall()
+        datos = datos[0]
+        print(datos)
+        print("DATO DE LA CONSULTA",datos[6])
+        email = datos[6]
+        clave = datos[2]
+        print("DATOS CONTRASEÑA ",datos[2])
+        user = {}
+        user[email] = {"contraseña":clave}
+        print("SE IMPRIME LOS DATOS DE USER ",user[email])
+        print("SE IMPRIME GET ", user.get(email))
+        if user.get(correo):
+            passwordUser= user[correo]["contraseña"]
+            print("DEPUES DEL IF ", passwordUser)
+            if bcrypt.checkpw(bytes(str(password), encoding='utf-8'),passwordUser.encode('utf-8')):
+            #if bcrypt.checkpw(bytes(str(password), encoding='utf-8'),passwordUser.encode('utf-8')):
+                
+                #return print("ESTAMOS AQUI ")
+                return jsonify({"auth": True, "nombres":datos[0], "apellidos":datos[1], "documento":datos[3], "direccion":datos[4], "telefono":datos[5], "token":token}), 200    
+            else:
+               return jsonify({"auth":False}), 403
+        else:
+            return jsonify({"auth":False}), 401
+"""        
         if bcrypt.check_password_hash(rv['password'], password):
             access_token = create_access_token(identity = {'nombres': rv['nombres'], 'apellidos': rv['apellidos'], 'email': rv['email']})
             result = jsonify({"token":access_token})
         else:
             result = jsonify({"Error":"ivalido el nombre o contraseña"})
         
-        return result
+        return result"""
         #return jsonify({"login ok": True, "nombre": email}), 200
 
 class TablaControllers(MethodView):
